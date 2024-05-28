@@ -17,35 +17,55 @@ const fromSupabase = async (query) => {
     return data;
 };
 
-/* supabase integration types
+// supabase integration types
 
-// EXAMPLE TYPES SECTION
+// Table: posts
+// Note: TypeScript types are removed for JavaScript compatibility
+// export type Post = {
+//     id: number;
+//     title: string;
+//     body: string;
+//     created_at: string;
+//     author_id: string;
+//     reactions?: Reaction[]; // available if .select('*,reactions(*)') was done
+// };
 
-Foo // table: foos
-    id: number
-    title: string
-    bars?: Bar[] // available if .select('*,bars(*)') was done
-
-Bar // table: bars
-    id: number
-    foo_id: number // foreign key to Foo
-	
-*/
+// Table: reactions
+// export type Reaction = {
+//     id: number;
+//     post_id: number; // Foreign Key to posts.id
+//     user_id: string;
+//     emoji: string;
+// };
 
 // hooks
 
-// EXAMPLE HOOKS SECTION
+export const usePosts = () => useQuery({
+    queryKey: ['posts'],
+    queryFn: () => fromSupabase(supabase.from('posts').select('*,reactions(*)')),
+});
 
-export const useFoo = ()=> useQuery({
-    queryKey: ['foo'],
-    queryFn: fromSupabase(supabase.from('foo').select('*,bars(*)')),
-})
-export const useAddFoo = () => {
+export const useAddPost = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newFoo)=> fromSupabase(supabase.from('foo').insert([{ title: newFoo.title }])),
-        onSuccess: ()=> {
-            queryClient.invalidateQueries('foo');
+        mutationFn: (newPost) => fromSupabase(supabase.from('posts').insert([newPost])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('posts');
+        },
+    });
+};
+
+export const useReactions = (postId) => useQuery({
+    queryKey: ['reactions', postId],
+    queryFn: () => fromSupabase(supabase.from('reactions').select('*').eq('post_id', postId)),
+});
+
+export const useAddReaction = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newReaction) => fromSupabase(supabase.from('reactions').insert([newReaction])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('reactions');
         },
     });
 };
