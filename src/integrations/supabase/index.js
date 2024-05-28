@@ -20,22 +20,23 @@ const fromSupabase = async (query) => {
 // supabase integration types
 
 // Table: posts
-export type Post = {
-    id: number;
-    title: string;
-    body: string;
-    created_at: string;
-    author_id: string;
-    reactions?: Reaction[]; // available if .select('*,reactions(*)') was done
-};
+// Note: TypeScript types are removed for JavaScript compatibility
+// export type Post = {
+//     id: number;
+//     title: string;
+//     body: string;
+//     created_at: string;
+//     author_id: string;
+//     reactions?: Reaction[]; // available if .select('*,reactions(*)') was done
+// };
 
 // Table: reactions
-export type Reaction = {
-    id: number;
-    post_id: number; // Foreign Key to posts.id
-    user_id: string;
-    emoji: string;
-};
+// export type Reaction = {
+//     id: number;
+//     post_id: number; // Foreign Key to posts.id
+//     user_id: string;
+//     emoji: string;
+// };
 
 // hooks
 
